@@ -113,6 +113,67 @@ gradient
 - **Size:** 18,612 samples
 - **Format:** Alpaca instruction format (`instruction`, `input`, `output`)
 
+## Dataset Examples
+
+The dataset follows the Alpaca instruction format with three fields: `instruction`, 
+`input`, and `output`. These are formatted into `prompt` and `completion` pairs 
+for training:
+
+**Example 1:**
+```text
+PROMPT:
+### Instruction:
+Create a function to calculate the sum of a sequence of integers.
+
+### Input:
+[1, 2, 3, 4, 5]
+
+### Response:
+
+COMPLETION:
+def sum_sequence(sequence):
+  sum = 0
+  for num in sequence:
+    sum += num
+  return sum
+```
+
+**Example 2:**
+```text
+PROMPT:
+### Instruction:
+Generate a Python code for crawling a website for a specific type of data.
+
+### Input:
+website: www.example.com
+data to crawl: phone numbers
+
+### Response:
+
+COMPLETION:
+import requests
+import re
+
+def crawl_website_for_phone_numbers(website):
+    response = requests.get(website)
+    phone_numbers = re.findall('\d{3}-\d{3}-\d{4}', response.text)
+    return phone_numbers
+```
+
+**Example 3:**
+```text
+PROMPT:
+### Instruction:
+Create a Python list comprehension to get the squared values of a list [1, 2, 3, 5, 8, 13].
+
+### Input:
+
+### Response:
+
+COMPLETION:
+[x*x for x in [1, 2, 3, 5, 8, 13]]
+```
+
 ## Results
 
 ### Training
