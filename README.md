@@ -10,8 +10,24 @@ This project demonstrates Supervised Fine-Tuning (SFT) of Meta's LLaMA 3.2-3B mo
 
 ## Technique: QLoRA
 
-Full fine-tuning of a 3B parameter model requires ~48GB+ VRAM. QLoRA makes this 
-feasible on a single consumer GPU by combining two techniques:
+## Technique: QLoRA
+
+Full fine-tuning of a 3B parameter model requires ~48GB+ VRAM. To understand why,
+during training the GPU must store 4 things simultaneously for every parameter:
+
+| What | Precision | Size for 3B params |
+|---|---|---|
+| Model weights | float16 | 6GB |
+| Gradients | float16 | 6GB |
+| Optimizer states (Adam m) | float32 | 12GB |
+| Optimizer states (Adam v) | float32 | 12GB |
+| Activations (batch) | float16 | ~4-8GB |
+| **Total** | | **~40-48GB** |
+
+We use the Adam optimizer which tracks two extra values per parameter (m and v),
+both in float32 (4 bytes each): 3B × 4 bytes × 2 = 24GB just for optimizer states alone.
+
+QLoLA makes this feasible on a single consumer GPU by combining two techniques:
 
 - **4-bit Quantization (bitsandbytes):** Compresses model weights from 16-bit to 4-bit,
   reducing VRAM from ~6GB to ~2GB. The weights are not lost — all 3 billion parameters
@@ -27,8 +43,11 @@ feasible on a single consumer GPU by combining two techniques:
   completely if rounded to 4-bit. The base model stays frozen in 4-bit while the adapters
   capture the fine-tuning signal accurately.
 
-The result: the base model uses ~2GB VRAM in 4-bit, the LoRA adapters add only ~50MB,
-and training fits comfortably within 12GB VRAM.
+The result:
+- Base model: ~2GB VRAM in 4-bit (vs 40-48GB for full fine-tuning)
+- LoRA adapter weights: ~24MB on disk
+- LoRA adapters during training (weights + gradients): ~48MB
+- Total training VRAM: fits comfortably within 12GB
 
 In a datacenter setting with NVIDIA A100/H100 GPUs (80GB VRAM), full fine-tuning or 
 16-bit training with DeepSpeed ZeRO-3 would be preferred for higher quality results.
