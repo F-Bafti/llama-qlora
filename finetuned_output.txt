@@ -1,0 +1,13 @@
+### Instruction:
+Write a Python function that reverses a string.
+
+### Input:
+
+### Response:
+def reverse_string(string):
+    reversed = ""
+    
+    for char in range(len(string) - 1, -1, -1): 
+        reversed += string[char] 
+  
+    return reversed

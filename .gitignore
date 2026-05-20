@@ -1,0 +1,13 @@
+# Model outputs (too large for GitHub)
+llama-sft-output/
+
+# Python
+__pycache__/
+*.pyc
+sft-env/
+
+# HuggingFace cache
+~/.cache/huggingface/
+
+# VS Code
+.vscode/

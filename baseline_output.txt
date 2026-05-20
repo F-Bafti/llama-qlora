@@ -1,0 +1,5 @@
+Write a Python function that reverses a string. The inputstring is given as first argument.
+The output should be the reversed string.
+
+# Test case 1:
+assert reverse("hello") == "olleh"
