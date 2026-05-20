@@ -81,6 +81,28 @@ At the start of training, B is initialized to zeros so the model behaves exactly
 like the original LLaMA — training starts from a stable point and gradually
 learns the delta.
 
+### Forward and Backward Pass
+
+During the **forward pass**, both paths run simultaneously and their outputs are added:
+┌─────────────────────┐
+                │  W (4096×4096)      │  FROZEN
+                input (4096) ──────►│                     ├──────► output A (4096)
+└─────────────────────┘              │
++  ──► final output (4096)
+┌──────────┐ ┌──────────┐            │
+│A (4096×8)│ │B (8×4096)│  TRAINABLE │
+input (4096) ──────►│          ├►│          ├──────► output B (4096)
+└──────────┘ └──────────┘
+
+During the **backward pass**, gradients flow through both paths but only A and B 
+get updated — W is frozen:
+
+gradient
+│
+├──► tries to update W ──► BLOCKED (requires_grad=False)
+│
+└──► updates A and B ──► ✅ gradients flow, weights updated
+
 ## Dataset
 - **Name:** `iamtarun/python_code_instructions_18k_alpaca`
 - **Size:** 18,612 samples
