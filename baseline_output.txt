@@ -1,5 +1,5 @@
 --- Prompt 1 ---
-Write a Python function that reverses a string. The input is the original string and output should be reversed.
+Write a Python function that reverses a string. The input is the original string, and output should be reversed.
 
 def reverse_string(string):
     return ''.join(reversed(list(string)))

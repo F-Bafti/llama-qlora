@@ -1,4 +1,6 @@
 import torch
+import json
+import transformers
 from datasets import load_dataset
 from transformers import (
     AutoModelForCausalLM,
@@ -105,6 +107,32 @@ for i in range(3):
     print(f"PROMPT:\n{dataset[i]['prompt']}")
     print(f"COMPLETION:\n{dataset[i]['completion']}")
     print("-" * 50)
+
+
+# Track metrics
+metrics_log = []
+
+class MetricsCallback(transformers.TrainerCallback):
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        if logs:
+            metrics_log.append({
+                "step": state.global_step,
+                "loss": logs.get("loss"),
+                "grad_norm": logs.get("grad_norm"),
+                "learning_rate": logs.get("learning_rate"),
+                "entropy": logs.get("entropy"),
+                "mean_token_accuracy": logs.get("mean_token_accuracy"),
+            })
+            # Save to file after every log
+            with open("training_metrics.json", "w") as f:
+                json.dump(metrics_log, f, indent=2)
+
+trainer = SFTTrainer(
+    model=model,
+    train_dataset=dataset,
+    args=sft_config,
+    callbacks=[MetricsCallback()]  # ← add this
+)
 
 # Start training
 print("Starting training...")
