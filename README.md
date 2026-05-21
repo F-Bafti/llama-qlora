@@ -185,26 +185,86 @@ COMPLETION:
 | Final loss | 0.56 |
 | Training time | 4m 44s |
 
-### Before SFT (Base Model)
+## Before vs After SFT
 
-Prompt: Write a Python function that reverses a string.
-Output: Write a Python function that reverses a string.
-The inputstring is given as first argument.
+The base model treats prompts as autocomplete — it describes what the function should 
+do instead of writing it. After SFT on 18k Python examples, the model correctly follows 
+the instruction format and generates working code.
+
+### Prompt 1: Reverse a string
+
+**Base model:**
+```text
+Write a Python function that reverses a string. The inputstring is given as first argument.
 The output should be the reversed string.
-Test case 1:
+# Test case 1:
 assert reverse("hello") == "olleh"
+```
 
-The base model treats the prompt as autocomplete — it does not follow instructions or write a function.
-
-### After SFT (Fine-tuned Model)
-Prompt: Write a Python function that reverses a string.
-Output:
+**Fine-tuned model:**
+```python
 def reverse_string(string):
-reversed = ""
-for char in range(len(string) - 1, -1, -1):
-reversed += string[char]
-return reversed
-The fine-tuned model correctly follows the instruction format and generates working Python code.
+    return ''.join(reversed(list(string)))
+
+# Test case
+string = 'hello'
+print(reverse_string(string)) # Output: olleh
+```
+
+---
+
+### Prompt 2: Check if a number is prime
+
+**Base model:**
+```text
+A prime number is a natural number greater than 1 and not divisible by any other 
+whole numbers except itself and 1. The first few primes are: 2,3,5,7,11,13…
+Note – This problem has been taken from HackerRank's "Python Primer for Beginners"
+```
+
+**Fine-tuned model:**
+```python
+def check_prime(n):
+    for i in range(2, n//2+1): 
+        if n % i == 0: return False
+```
+
+---
+
+### Prompt 3: Find maximum element in a list
+
+**Base model:**
+```text
+The input is an array of integers and you need to return its largest value.
+The first line contains T, number of test cases.
+Each case consists of one integer N denoting size of given Array A[].
+Print out single Integer which represents Maximum Element present in Given List.
+```
+
+**Fine-tuned model:**
+```python
+def max_element(arr):
+    if len(arr) == 0:
+        raise ValueError("Array cannot be empty")
+    
+    current_max = arr[0]
+    for i, num in enumerate(arr): 
+        if num > current_max:
+            current_max = num
+    return current_max
+```
+
+---
+
+### Summary
+
+| | Base Model | Fine-tuned Model |
+|---|---|---|
+| Follows instruction format | ❌ | ✅ |
+| Writes actual function | ❌ | ✅ |
+| Correct logic | ❌ | ✅ |
+| Includes test cases | ❌ | ✅ |
+| Stays on topic | ❌ | ✅ |
 
 ## Project Structure
 llama-sft/
