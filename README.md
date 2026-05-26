@@ -33,7 +33,8 @@ The result:
 - Base model: ~2GB VRAM in 4-bit (vs 40-48GB for full fine-tuning)
 - LoRA adapter weights: ~24MB on disk
 - LoRA adapters during training (weights + gradients): ~48MB
-- Total training VRAM: fits comfortably within 12GB
+- optimizer params (3 params each with fp32): ~ 144MB
+- Total training VRAM: ~ 2.5GB fits comfortably within 12GB
 
 In a datacenter setting with NVIDIA A100/H100 GPUs (80GB VRAM), full fine-tuning or 16-bit training with DeepSpeed ZeRO-3 would be preferred for higher quality results.
 
